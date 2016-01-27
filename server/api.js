@@ -4,7 +4,8 @@ if (Meteor.isServer) {
   var Api = new Restivus({
     useDefaultAuth: true,
     prettyJson: true,
-    enableCors: true
+    enableCors: true,
+    defaultHeaders: "{ 'Content-Type': 'application/json' , 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': ['GET', 'POST', 'PUT', 'DELETE']}"
   });
   Api.addRoute('budget', {}, {
     get: function () {
