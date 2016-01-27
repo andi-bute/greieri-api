@@ -3,7 +3,8 @@ if (Meteor.isServer) {
   // Global API configuration
   var Api = new Restivus({
     useDefaultAuth: true,
-    prettyJson: true
+    prettyJson: true,
+    enableCors: true
   });
   Api.addRoute('budget', {}, {
     get: function () {
@@ -92,29 +93,32 @@ if (Meteor.isServer) {
   Api.addRoute('transactions', {}, {
     get: function() {
       var selector = {};
-      //if(this.queryParams.type && type!=="all") {
-      //  selector.type = this.queryParams.type;
-      //}
-      //if(this.queryParams.lastMonths) {
-      //  var compareDate = moment();
-      //  compareDate.dates(1);
-      //  compareDate.subtract(parseInt(this.queryParams.lastMonths), 'month');
-      //  selector.date = {'$gte': compareDate.toString()};
-      //}
-      //if(this.queryParams.byCategory) {
-      //  selector.catId = this.queryParams.byCategory;
-      //}
+      if(this.queryParams.type && type!=="all") {
+        selector.type = this.queryParams.type;
+      }
+      if(this.queryParams.pastMonths !== undefined || this.queryParams.pastMonths !== null) {
+        var compareDate = moment();
+        compareDate.date(1);
+        compareDate.subtract(parseInt(this.queryParams.pastMonths), 'month');
+        selector.date = {'$gte': compareDate.format("DD MM YYYY")};
+      }
+      if(this.queryParams.category) {
+        selector.catId = this.queryParams.category;
+      }
       var limiter = {};
-      //if(this.queryParams.page) {
-      //  limiter.skip = this.queryParams.page;
-      //}
-      //if(this.queryParams.limitPerPage) {
-      //  limiter.limit = this.queryParams.limitPerPage;
-      //}
-      //if(this.queryParams.sortBy) {
-      //  limiter.sort = {};
-      //  limiter.sort[this.queryParams.sortBy] = 1;
-      //}
+      if(this.queryParams.page) {
+        limiter.skip = this.queryParams.page;
+      }
+      if(this.queryParams.perPage) {
+        limiter.limit = this.queryParams.perPage;
+      }
+      if(this.queryParams.sortField) {
+        limiter.sort = {};
+        limiter.sort[this.queryParams.sortField] = 1;
+        if(this.queryParams.sortDir === 'desc') {
+          limiter.sort[this.queryParams.sortField] = -1;
+        }
+      }
       return Transactions.find(selector, limiter).fetch();
     },
     put: function() {
@@ -194,6 +198,7 @@ if (Meteor.isServer) {
         };
       }
       Recurring.remove({_id: this.urlParams.id});
+      delete GreiereCronJobs[this.urlParams.id];
       return {
         statusCode: 200,
         body: {status: 'success', message: 'Recurring removed'}
@@ -214,7 +219,10 @@ if (Meteor.isServer) {
         };
       }
       Recurring.update({_id: this.urlParams.id}, {$set: this.bodyParams});
-      return Recurring.findOne(this.urlParams.id);
+      delete GreiereCronJobs[this.urlParams.id];
+      var rec = Recurring.findOne(this.urlParams.id);
+      addRecurring(rec);
+      return rec;
     }
   });
   Api.addRoute('recurring', {}, {
@@ -235,7 +243,9 @@ if (Meteor.isServer) {
     },
     put: function() {
       var id = Recurring.insert(this.bodyParams);
-      return Recurring.findOne(id);
+      var rec = Recurring.findOne(id);
+      addRecurring(rec);
+      return rec;
     }
   });
 }
