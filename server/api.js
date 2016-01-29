@@ -232,6 +232,22 @@ if (Meteor.isServer) {
   });
 
   Api.addRoute('recurring/:id',{},{
+    get: function() {
+      if(!this.urlParams.id) {
+        return {
+          statusCode: 404,
+          body: {status: 'fail', message: 'Recurring id not set'}
+        };
+      }
+      var recurring = Recurring.findOne(this.urlParams.id);
+      if(!recurring) {
+        return {
+          statusCode: 404,
+          body: {status: 'fail', message: 'Recurring not found'}
+        };
+      }
+      return recurring;
+    },
     delete: function() {
       if(!this.urlParams.id) {
         return {
