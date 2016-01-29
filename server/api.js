@@ -45,7 +45,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Category not set'}
+          body: {status: 'fail', message: 'Category id not set'}
         };
       }
       var category = Categories.findOne(this.urlParams.id);
@@ -61,7 +61,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Category not set'}
+          body: {status: 'fail', message: 'Category id not set'}
         };
       }
       var category = Categories.findOne(this.urlParams.id);
@@ -81,7 +81,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Category id missing'}
+          body: {status: 'fail', message: 'Category id not set'}
         };
       }
       var category = Categories.findOne(this.urlParams.id);
@@ -173,7 +173,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Category not set'}
+          body: {status: 'fail', message: 'Teransaction id not set'}
         };
       }
       var transaction = Transactions.findOne(this.urlParams.id);
@@ -189,7 +189,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Category not set'}
+          body: {status: 'fail', message: 'Transaction id not set'}
         };
       }
       var transaction = Transactions.findOne(this.urlParams.id);
@@ -206,7 +206,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Category not set'}
+          body: {status: 'fail', message: 'Transaction id not set'}
         };
       }
       var transaction = Transactions.findOne(this.urlParams.id);
@@ -273,7 +273,7 @@ if (Meteor.isServer) {
       if(!this.urlParams.id) {
         return {
           statusCode: 404,
-          body: {status: 'fail', message: 'Recurring id missing'}
+          body: {status: 'fail', message: 'Recurring id not set'}
         };
       }
       var recurring = Recurring.findOne(this.urlParams.id);
